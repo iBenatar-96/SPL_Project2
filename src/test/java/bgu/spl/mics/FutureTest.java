@@ -1,0 +1,55 @@
+package bgu.spl.mics;
+import org.junit.jupiter.api.BeforeEach;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.TimeUnit;
+
+
+import static org.junit.jupiter.api.Assertions.*;
+
+
+public class FutureTest {
+
+    private Future<String> future;
+
+    @BeforeEach
+    public void setUp(){
+        future = new Future<>();
+    }
+
+    @Test
+    public void testGet()
+    {
+        assertFalse(future.isDone());
+        future.resolve("test");
+        future.get();
+        assertTrue(future.isDone());
+    }
+
+    @Test
+    public void testResolve(){
+        String str = "test";
+        future.resolve(str);
+        assertTrue(future.isDone());
+        assertEquals(future.get(), str);
+    }
+
+    @Test
+    public void testIsDone(){
+        String str = "test";
+        assertFalse(future.isDone());
+        future.resolve(str);
+        assertTrue(future.isDone());
+    }
+
+    @Test
+    public void testGetWithTimeOut() throws InterruptedException
+    {
+        assertFalse(future.isDone());
+        future.get(100,TimeUnit.MILLISECONDS);
+        assertFalse(future.isDone());
+        future.resolve("test");
+        assertEquals(future.get(100,TimeUnit.MILLISECONDS),"test");
+    }
+}
